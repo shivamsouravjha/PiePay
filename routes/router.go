@@ -1,0 +1,18 @@
+package routes
+
+import (
+	"piepay/middlewares"
+
+	"github.com/gin-gonic/gin"
+)
+
+func NewRouter() *gin.Engine {
+
+	router := gin.New()
+	router.Use(middlewares.CORSMiddleware())
+
+	v1 := router.Group("/api")
+	v1Routes(v1)
+
+	return router
+}
