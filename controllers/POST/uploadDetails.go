@@ -45,6 +45,7 @@ func UploadVideoMetaData() {
 	if err != nil {
 		errorText := strings.Split(err.Error(), ", ")
 		if errorText[1] == "quotaExceeded" {
+			fmt.Println("Keys changed")
 			config.UpdateKey() //if error is of quota exceeded , past new key
 		}
 	} else {

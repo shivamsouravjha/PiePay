@@ -116,6 +116,6 @@ func UpdateKey() {
 	if Passcode >= len(YoutubeKeyList) {
 		Passcode = 0
 	}
-	config.YoutubeKey += YoutubeKeyList[Passcode]
+	config.YoutubeKey = YoutubeKeyList[Passcode]
 	Passcode++
 }
