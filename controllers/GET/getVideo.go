@@ -37,7 +37,7 @@ func GetVideo(c *gin.Context) {
 	}
 
 	resp.Status = "Success"
-	resp.Message = "Creator updated successfully"
+	resp.Message = "Video fetched successfully"
 	resp.Data = response
 	span.Status = sentry.SpanStatusOK
 

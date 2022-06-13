@@ -14,7 +14,7 @@ import (
 
 func SearchVideo(c *gin.Context) {
 	defer sentry.Recover()
-	span := sentry.StartSpan(context.TODO(), "[GIN] GetAnyHandler", sentry.TransactionName("Get Any Handler"))
+	span := sentry.StartSpan(context.TODO(), "[GIN] SearchHandler", sentry.TransactionName("Search any video handler"))
 	defer span.Finish()
 
 	formRequest := requests.SearchVideo{}
@@ -49,7 +49,7 @@ func SearchVideo(c *gin.Context) {
 	}
 
 	resp.Status = "Success"
-	resp.Message = "Creator updated successfully"
+	resp.Message = "Video fetched successfully"
 	resp.Data = response
 	span.Status = sentry.SpanStatusOK
 
