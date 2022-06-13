@@ -19,16 +19,28 @@ func GetSearchVideo(ctx context.Context, request *requests.SearchVideo, sentryCt
 	defer sentry.Recover()
 	span := sentry.StartSpan(sentryCtx, "[DAO] GetAny")
 	defer span.Finish()
+
+	var res *elastic.SearchResult
+	var err error
 	if request.Page == 0 {
 		request.Size = 10
 	}
-	dbSpan1 := sentry.StartSpan(span.Context(), "[DB] Get from videos")
-	res, err := es.Client().Search().Index("video").SearchSource(elastic.NewSearchSource().Query(QueryDetails("description", "a")).SortBy(SortDetails("publishedAt")).From(request.Page).Size(request.Size)).Do(ctx)
-	rescfg, _ := json.Marshal(elastic.NewSearchSource().Query(QueryDetails("description", "a")).SortBy(SortDetails("publishedAt")))
-	fmt.Println(string(rescfg))
 
-	fmt.Println(string(rescfg))
-	dbSpan1.Finish()
+	if len(request.Description) != 0 {
+		dbSpan1 := sentry.StartSpan(span.Context(), "[DB] Get from videos")
+		res, err = es.Client().Search().Index("video").SearchSource(elastic.NewSearchSource().Query(QueryDetails("description", request.Description)).SortBy(SortDetails("publishedAt")).From(request.Page).Size(request.Size)).Do(ctx)
+		rescfg, _ := json.Marshal(elastic.NewSearchSource().Query(QueryDetails("description", request.Description)).SortBy(SortDetails("publishedAt")))
+		fmt.Println(string(rescfg))
+		dbSpan1.Finish()
+
+	} else {
+		dbSpan1 := sentry.StartSpan(span.Context(), "[DB] Get from videos")
+		res, err = es.Client().Search().Index("video").SearchSource(elastic.NewSearchSource().Query(QueryDetails("title", request.Title)).SortBy(SortDetails("publishedAt")).From(request.Page).Size(request.Size)).Do(ctx)
+		rescfg, _ := json.Marshal(elastic.NewSearchSource().Query(QueryDetails("title", request.Title)).SortBy(SortDetails("publishedAt")))
+		fmt.Println(string(rescfg))
+		dbSpan1.Finish()
+
+	}
 
 	if err != nil {
 		sentry.CaptureException(err)
