@@ -63,16 +63,17 @@ func UploadVideoMetaData() {
 				})
 			}
 		}
-		uploadOnEs("Videos", videos)
+		index := config.Get().Index
+		uploadOnEs(index, videos)
 	}
 }
 
-func uploadOnEs(hehe string, matches []structs.Video) {
+func uploadOnEs(index string, matches []structs.Video) {
 	bulk := es.Client().Bulk()
 
 	for i := range matches { //adding each unit in bulk
 		idStr := matches[i].ID.ID
-		req := elastic.NewBulkIndexRequest().Id(idStr).Index("video").Doc(matches[i])
+		req := elastic.NewBulkIndexRequest().Id(idStr).Index(index).Doc(matches[i])
 		bulk = bulk.Add(req)
 	}
 

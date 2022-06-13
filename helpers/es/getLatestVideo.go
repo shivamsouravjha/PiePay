@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"context"
+	"piepay/config"
 	"piepay/services/es"
 	"piepay/services/logger"
 	"piepay/structs"
@@ -21,9 +22,10 @@ func GetLatestVideo(ctx context.Context, request *requests.GetVideo, sentryCtx c
 	if request.Size == 0 {
 		request.Size = 10
 	}
+	index := config.Get().Index
 
 	dbSpan1 := sentry.StartSpan(span.Context(), "[DB] Get from videos index")
-	res, err := es.Client().Search().Index("video").SearchSource(elastic.NewSearchSource().SortBy(SortDetails("publishedAt")).From(request.Page).Size(request.Size)).Do(ctx)
+	res, err := es.Client().Search().Index(index).SearchSource(elastic.NewSearchSource().SortBy(SortDetails("publishedAt")).From(request.Page).Size(request.Size)).Do(ctx)
 
 	dbSpan1.Finish() //noting time of query
 

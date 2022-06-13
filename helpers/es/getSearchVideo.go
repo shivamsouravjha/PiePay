@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"context"
+	"piepay/config"
 	"piepay/services/es"
 	"piepay/services/logger"
 	"piepay/structs"
@@ -24,15 +25,17 @@ func GetSearchVideo(ctx context.Context, request *requests.SearchVideo, sentryCt
 		request.Size = 10
 	}
 
+	index := config.Get().Index
+
 	if len(request.Description) != 0 { //if searching on basis of description,search description in sources
 		dbSpan1 := sentry.StartSpan(span.Context(), "[DB] Search from video index")
-		res, err = es.Client().Search().Index("video").SearchSource(elastic.NewSearchSource().Query(QueryDetails("description", request.Description)).From(request.Page).Size(request.Size)).Do(ctx)
+		res, err = es.Client().Search().Index(index).SearchSource(elastic.NewSearchSource().Query(QueryDetails("description", request.Description)).From(request.Page).Size(request.Size)).Do(ctx)
 
 		dbSpan1.Finish()
 
 	} else { //if searching on basis of title,search title in sources
 		dbSpan1 := sentry.StartSpan(span.Context(), "[DB] Get from videos")
-		res, err = es.Client().Search().Index("video").SearchSource(elastic.NewSearchSource().Query(QueryDetails("title", request.Title)).SortBy(SortDetails("publishedAt")).From(request.Page).Size(request.Size)).Do(ctx)
+		res, err = es.Client().Search().Index(index).SearchSource(elastic.NewSearchSource().Query(QueryDetails("title", request.Title)).SortBy(SortDetails("publishedAt")).From(request.Page).Size(request.Size)).Do(ctx)
 
 		dbSpan1.Finish()
 

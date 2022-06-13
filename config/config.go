@@ -39,6 +39,7 @@ type Config struct {
 	Key                  string
 	Topic                string
 	YoutubeKey           string
+	Index                string
 }
 
 var config Config
@@ -98,6 +99,7 @@ func init() {
 	config.Password = os.Getenv("sasl.password")
 	config.Topic = os.Getenv("topic")
 	config.Key = os.Getenv("Key")
+	config.Index = os.Getenv("Index")
 
 	YoutubeKey = os.Getenv("YoutubeKey")
 	YoutubeKeyList = strings.Split(YoutubeKey, ",")
