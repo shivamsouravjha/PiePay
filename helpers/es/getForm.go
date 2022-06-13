@@ -28,15 +28,15 @@ func GetSearchVideo(ctx context.Context, request *requests.SearchVideo, sentryCt
 
 	if len(request.Description) != 0 {
 		dbSpan1 := sentry.StartSpan(span.Context(), "[DB] Get from videos")
-		res, err = es.Client().Search().Index("video").SearchSource(elastic.NewSearchSource().Query(QueryDetails("description", request.Description)).SortBy(SortDetails("publishedAt")).From(request.Page).Size(request.Size)).Do(ctx)
-		rescfg, _ := json.Marshal(elastic.NewSearchSource().Query(QueryDetails("description", request.Description)).SortBy(SortDetails("publishedAt")))
+		res, err = es.Client().Search().Index("video").SearchSource(elastic.NewSearchSource().Query(QueryDetails("description", request.Description)).From(request.Page).Size(request.Size)).Do(ctx)
+		rescfg, _ := json.Marshal(elastic.NewSearchSource().Query(QueryDetails("description", request.Description)).Size(request.Size))
 		fmt.Println(string(rescfg))
 		dbSpan1.Finish()
 
 	} else {
 		dbSpan1 := sentry.StartSpan(span.Context(), "[DB] Get from videos")
 		res, err = es.Client().Search().Index("video").SearchSource(elastic.NewSearchSource().Query(QueryDetails("title", request.Title)).SortBy(SortDetails("publishedAt")).From(request.Page).Size(request.Size)).Do(ctx)
-		rescfg, _ := json.Marshal(elastic.NewSearchSource().Query(QueryDetails("title", request.Title)).SortBy(SortDetails("publishedAt")))
+		rescfg, _ := json.Marshal(elastic.NewSearchSource().Query(QueryDetails("title", request.Title)).Size(request.Size))
 		fmt.Println(string(rescfg))
 		dbSpan1.Finish()
 
