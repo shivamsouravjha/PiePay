@@ -2,7 +2,6 @@ package GET
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	helpers "piepay/helpers/es"
 	"piepay/structs/requests"
@@ -28,8 +27,20 @@ func SearchVideo(c *gin.Context) {
 	}
 	ctx := c.Request.Context()
 	resp := response.VideoResponse{}
-	fmt.Println(formRequest)
-	response, err := helpers.GetSearchVideo(ctx, &formRequest, span.Context())
+	var response response.GetVideo
+
+	var err error
+	if len(formRequest.Description) == 0 && len(formRequest.Title) == 0 {
+		getRequest := requests.GetVideo{
+			Page: formRequest.Page,
+			Size: formRequest.Size,
+		}
+		response, err = helpers.GetLatestVideo(ctx, &getRequest, span.Context())
+
+	} else {
+		response, err = helpers.GetSearchVideo(ctx, &formRequest, span.Context())
+	}
+
 	if err != nil {
 		resp.Status = "Failed"
 		resp.Message = err.Error()
