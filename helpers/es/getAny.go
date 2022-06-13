@@ -15,7 +15,7 @@ import (
 	"github.com/olivere/elastic/v7"
 )
 
-func GetAny(ctx context.Context, request *requests.GetVideo, sentryCtx context.Context) (response.GetVideo, error) {
+func GetLatestVideo(ctx context.Context, request *requests.GetVideo, sentryCtx context.Context) (response.GetVideo, error) {
 	defer sentry.Recover()
 	span := sentry.StartSpan(sentryCtx, "[DAO] GetAny")
 	defer span.Finish()
@@ -24,8 +24,8 @@ func GetAny(ctx context.Context, request *requests.GetVideo, sentryCtx context.C
 		request.Size = 10
 	}
 	dbSpan1 := sentry.StartSpan(span.Context(), "[DB] Get from videos")
-	res, err := es.Client().Search().Index("video").SearchSource(elastic.NewSearchSource().Size(1000).Size(1000).SortBy(SortDetails("publishedAt")).From(request.Page).Size(request.Size)).Do(ctx)
-	rescfg, _ := json.Marshal(elastic.NewSearchSource().Size(1000).Size(1000).SortBy(SortDetails("publishedAt")).From(request.Page).Size(request.Size))
+	res, err := es.Client().Search().Index("video").SearchSource(elastic.NewSearchSource().SortBy(SortDetails("publishedAt")).From(request.Page).Size(request.Size)).Do(ctx)
+	rescfg, _ := json.Marshal(elastic.NewSearchSource().SortBy(SortDetails("publishedAt")).From(request.Page).Size(request.Size))
 	fmt.Println(string(rescfg))
 
 	dbSpan1.Finish()
@@ -54,4 +54,10 @@ func GetAny(ctx context.Context, request *requests.GetVideo, sentryCtx context.C
 
 func SortDetails(param string) *elastic.FieldSort {
 	return elastic.NewFieldSort(param).Desc()
+}
+func FormDetails(id string) *elastic.TermQuery {
+	return elastic.NewTermQuery("title", id)
+}
+func QueryDetails(param string, value string) *elastic.MatchQuery {
+	return elastic.NewMatchQuery(param, value)
 }

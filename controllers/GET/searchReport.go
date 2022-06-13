@@ -18,7 +18,7 @@ func SearchVideo(c *gin.Context) {
 	span := sentry.StartSpan(context.TODO(), "[GIN] GetAnyHandler", sentry.TransactionName("Get Any Handler"))
 	defer span.Finish()
 
-	formRequest := requests.GetVideo{}
+	formRequest := requests.SearchVideo{}
 
 	if err := c.ShouldBind(&formRequest); err != nil {
 		span.Status = sentry.SpanStatusFailedPrecondition
@@ -29,7 +29,7 @@ func SearchVideo(c *gin.Context) {
 	ctx := c.Request.Context()
 	resp := response.VideoResponse{}
 	fmt.Println(formRequest)
-	response, err := helpers.GetAny(ctx, &formRequest, span.Context())
+	response, err := helpers.GetSearchVideo(ctx, &formRequest, span.Context())
 	if err != nil {
 		resp.Status = "Failed"
 		resp.Message = err.Error()

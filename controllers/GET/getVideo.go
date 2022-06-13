@@ -29,7 +29,7 @@ func GetVideo(c *gin.Context) {
 	ctx := c.Request.Context()
 	resp := response.VideoResponse{}
 	fmt.Println(formRequest)
-	response, err := helpers.GetAny(ctx, &formRequest, span.Context())
+	response, err := helpers.GetLatestVideo(ctx, &formRequest, span.Context())
 	if err != nil {
 		resp.Status = "Failed"
 		resp.Message = err.Error()
