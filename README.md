@@ -26,6 +26,7 @@
     ES_URL=
     Key=
     YoutubeKey=
+    Index=
 ```
 **Sentry Dashboard**
 ![Screenshot (429)](https://user-images.githubusercontent.com/60891544/173463417-1ef75f39-3249-41be-a690-638da76a5452.png)
