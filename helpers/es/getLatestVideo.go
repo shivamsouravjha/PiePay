@@ -2,8 +2,6 @@ package helpers
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"piepay/services/es"
 	"piepay/services/logger"
 	"piepay/structs"
@@ -17,18 +15,17 @@ import (
 
 func GetLatestVideo(ctx context.Context, request *requests.GetVideo, sentryCtx context.Context) (response.GetVideo, error) {
 	defer sentry.Recover()
-	span := sentry.StartSpan(sentryCtx, "[DAO] GetAny")
+	span := sentry.StartSpan(sentryCtx, "[DAO] GetLatestVideo") //sentry to log db calls
 	defer span.Finish()
-	fmt.Println(request.Page)
+
 	if request.Size == 0 {
 		request.Size = 10
 	}
-	dbSpan1 := sentry.StartSpan(span.Context(), "[DB] Get from videos")
-	res, err := es.Client().Search().Index("video").SearchSource(elastic.NewSearchSource().SortBy(SortDetails("publishedAt")).From(request.Page).Size(request.Size)).Do(ctx)
-	rescfg, _ := json.Marshal(elastic.NewSearchSource().SortBy(SortDetails("publishedAt")).From(request.Page).Size(request.Size))
-	fmt.Println(string(rescfg))
 
-	dbSpan1.Finish()
+	dbSpan1 := sentry.StartSpan(span.Context(), "[DB] Get from videos index")
+	res, err := es.Client().Search().Index("video").SearchSource(elastic.NewSearchSource().SortBy(SortDetails("publishedAt")).From(request.Page).Size(request.Size)).Do(ctx)
+
+	dbSpan1.Finish() //noting time of query
 
 	if err != nil {
 		sentry.CaptureException(err)

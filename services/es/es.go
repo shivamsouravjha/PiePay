@@ -2,7 +2,6 @@ package es
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"piepay/config"
 	"sync"
@@ -25,8 +24,7 @@ func Init() *elastic.Client {
 		if err != nil {
 			panic(err.Error())
 		}
-		fmt.Println(config.Get().EsURL)
-		_, _, err = client.Ping(config.Get().EsURL).Do(context.Background())
+		_, _, err = client.Ping(config.Get().EsURL).Do(context.Background()) //ping elasticsearch to see if connection is stable
 		if err != nil {
 			panic(err)
 		}

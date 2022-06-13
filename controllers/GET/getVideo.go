@@ -2,7 +2,6 @@ package GET
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	helpers "piepay/helpers/es"
 	"piepay/structs/requests"
@@ -15,7 +14,7 @@ import (
 
 func GetVideo(c *gin.Context) {
 	defer sentry.Recover()
-	span := sentry.StartSpan(context.TODO(), "[GIN] GetAnyHandler", sentry.TransactionName("Get Any Handler"))
+	span := sentry.StartSpan(context.TODO(), "[GIN] GetVideoHandler", sentry.TransactionName("Get latest video")) //setting transaction sentry
 	defer span.Finish()
 
 	formRequest := requests.GetVideo{}
@@ -28,8 +27,8 @@ func GetVideo(c *gin.Context) {
 	}
 	ctx := c.Request.Context()
 	resp := response.VideoResponse{}
-	fmt.Println(formRequest)
-	response, err := helpers.GetLatestVideo(ctx, &formRequest, span.Context())
+
+	response, err := helpers.GetLatestVideo(ctx, &formRequest, span.Context()) //the DAO level
 	if err != nil {
 		resp.Status = "Failed"
 		resp.Message = err.Error()

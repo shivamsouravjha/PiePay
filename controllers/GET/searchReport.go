@@ -30,7 +30,7 @@ func SearchVideo(c *gin.Context) {
 	var response response.GetVideo
 
 	var err error
-	if len(formRequest.Description) == 0 && len(formRequest.Title) == 0 {
+	if len(formRequest.Description) == 0 && len(formRequest.Title) == 0 { //if both title and description is empty its searching anything
 		getRequest := requests.GetVideo{
 			Page: formRequest.Page,
 			Size: formRequest.Size,

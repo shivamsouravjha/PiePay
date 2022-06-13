@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -37,9 +38,13 @@ type Config struct {
 	Protocol             string
 	Key                  string
 	Topic                string
+	YoutubeKey           string
 }
 
 var config Config
+var YoutubeKeyList []string
+var YoutubeKey string
+var Passcode = 0
 
 // Should run at the very beginning, before any other package
 // or code.
@@ -93,6 +98,10 @@ func init() {
 	config.Password = os.Getenv("sasl.password")
 	config.Topic = os.Getenv("topic")
 	config.Key = os.Getenv("Key")
+
+	YoutubeKey = os.Getenv("YoutubeKey")
+	YoutubeKeyList = strings.Split(YoutubeKey, ",")
+	UpdateKey()
 }
 
 func Get() Config {
@@ -101,4 +110,12 @@ func Get() Config {
 
 func IsProduction() bool {
 	return config.AppEnv == "production"
+}
+
+func UpdateKey() {
+	if Passcode >= len(YoutubeKeyList) {
+		Passcode = 0
+	}
+	config.YoutubeKey += YoutubeKeyList[Passcode]
+	Passcode++
 }

@@ -13,9 +13,9 @@ import (
 
 func Init() {
 
-	config := config.Get()
+	config := config.Get() //getting all the env configs
 
-	err := sentry.Init(sentry.ClientOptions{
+	err := sentry.Init(sentry.ClientOptions{ //initialsing sentry for error tracing and monitoring performance
 		Dsn:              config.SentryDSN,
 		Debug:            true,
 		Environment:      config.AppEnv,
@@ -25,8 +25,8 @@ func Init() {
 		log.Fatalf("sentry.Init: %s", err)
 	}
 	defer sentry.Flush(2 * time.Second)
-	es.Init()
-	go utils.Uploader()
-	r := routes.NewRouter()
-	r.Run(":" + "4000")
+	es.Init()                      //initalising connection to elastic search
+	go utils.Uploader()            // starting the backgroup goroutine to upload the videos
+	r := routes.NewRouter()        //initialsing routes
+	r.Run(":" + config.ServerPort) //running the server at port
 }

@@ -9,7 +9,7 @@ import (
 func NewRouter() *gin.Engine {
 
 	router := gin.New()
-	router.Use(middlewares.CORSMiddleware())
+	router.Use(middlewares.CORSMiddleware()) //removing cors error for interacting with frontend
 
 	v1 := router.Group("/api")
 	v1Routes(v1)
